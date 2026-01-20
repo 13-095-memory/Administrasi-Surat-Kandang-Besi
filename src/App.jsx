@@ -16,15 +16,16 @@ import StatusSurat from "./pages/Warga/StatusSurat";
 // --- IMPORT HALAMAN ADMIN ---
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminPengajuan from "./pages/Admin/AdminPengajuan";
+import AdminTemplate from "./pages/Admin/AdminTemplate"; // Pastikan ini sudah diimport
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* 1. REDIRECT OTOMATIS SAAT BUKA WEB */}
+        {/* 1. REDIRECT AWAL */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* 2. RUTE UNTUK WARGA (Tanpa Sidebar Admin) */}
+        {/* 2. RUTE WARGA */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/beranda" element={<Dashboard />} />
@@ -33,15 +34,14 @@ function App() {
         <Route path="/status-surat" element={<StatusSurat />} />
         <Route path="/profil" element={<Profil />} />
 
-        {/* 3. RUTE UNTUK ADMIN (Dibungkus AdminLayout yang ada Sidebar-nya) */}
+        {/* 3. RUTE ADMIN (Satu grup di sini) */}
         <Route path="/admin" element={<AdminLayout />}>
-          {/* Akses via: /admin/dashboard */}
           <Route path="dashboard" element={<AdminDashboard />} />
-          {/* Akses via: /admin/pengajuan */}
           <Route path="pengajuan" element={<AdminPengajuan />} />
+          <Route path="template" element={<AdminTemplate />} />
         </Route>
 
-        {/* 4. FALLBACK (Jika URL ngawur, balik ke login) */}
+        {/* 4. FALLBACK */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

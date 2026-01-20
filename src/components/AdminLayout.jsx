@@ -1,17 +1,17 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "./AdminSidebar"; // Import sidebar yang kita buat tadi
+import AdminHeader from "./AdminHeader";
 
 export default function AdminLayout() {
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar tetap di kiri */}
-      <AdminSidebar />
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Navigasi Pindah Ke Atas */}
+      <AdminHeader />
       
-      {/* Konten halaman admin akan muncul di Outlet ini */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Konten Utama Dibawahnya */}
+      <main className="container mx-auto">
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 }

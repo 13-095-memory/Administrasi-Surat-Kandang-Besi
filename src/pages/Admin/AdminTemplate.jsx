@@ -1,145 +1,94 @@
-import React, { useState } from "react";
+import React from "react";
+import { Save, Info, Printer } from "lucide-react";
 
-const AdminTemplate = () => {
-  const [selectedType, setSelectedType] = useState('domisili');
-  
-  // State Data Surat (Satu untuk semua agar praktis)
-  const [formData, setFormData] = useState({
-    nomor: "001/SK/2026",
-    nama: "NAMA LENGKAP",
-    nik: "1234567890123456",
-    ttl: "Jakarta, 01-01-1990",
-    jk: "Laki-laki",
-    alamat: "Alamat Lengkap RT/RW Desa...",
-    keperluan: "Keperluan pembuatan surat...",
-    ket: "Keterangan tambahan jika ada...",
-    tgl_surat: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
-  });
-
-  const handleInput = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // --- KOMPONEN KERTAS SURAT (POLOS TANPA TITIK-TITIK) ---
-  const SuratWrapper = ({ judul, children }) => (
-    <div className="bg-white w-[794px] min-h-[1123px] shadow-2xl p-16 text-black font-serif border border-slate-300 mx-auto animate-in fade-in duration-500">
-      {/* KOP SURAT */}
-      <div className="text-center border-b-4 border-black pb-2 mb-10">
-        <h1 className="text-xl font-bold uppercase leading-tight text-slate-900">Pemerintah Kabupaten Sidoarjo</h1>
-        <h1 className="text-xl font-bold uppercase leading-tight text-slate-900">Kecamatan Waru - Desa Tropodo</h1>
-        <p className="text-xs italic font-sans mt-1 text-slate-600">Jl. Raya Tropodo No. 123, Telp: (031) 1234567</p>
-      </div>
-
-      {/* JUDUL */}
-      <div className="text-center mb-10">
-        <h2 className="text-lg font-bold underline uppercase">{judul}</h2>
-        <div className="flex justify-center items-center gap-1 mt-1">
-          <span className="text-sm">Nomor:</span>
-          <input name="nomor" value={formData.nomor} onChange={handleInput} className="outline-none text-sm w-40 bg-slate-50/50 hover:bg-slate-100 px-1" />
-        </div>
-      </div>
-
-      {/* ISI */}
-      <div className="text-[14px] space-y-6 leading-relaxed">
-        <p>Yang bertanda tangan di bawah ini, Kepala Desa Tropodo menerangkan bahwa:</p>
-        <div className="ml-10 space-y-2">
-          {children}
-        </div>
-        <p className="indent-10">Demikian surat keterangan ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya.</p>
-      </div>
-
-      {/* TANDA TANGAN */}
-      <div className="mt-20 flex justify-end">
-        <div className="text-center w-64 text-sm">
-          <p>Tropodo, {formData.tgl_surat}</p>
-          <p className="mb-24 font-bold uppercase mt-2">Kepala Desa Tropodo,</p>
-          <p className="font-bold underline uppercase">SURYANI, S.Sos</p>
-          <p className="text-xs">NIP: 19820301 201001 2 001</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  // --- LOGIKA FORM BERDASARKAN JENIS ---
-  const renderTemplate = () => {
-    const inputStyle = "flex-1 outline-none bg-transparent hover:bg-slate-50 px-1 font-bold uppercase";
-    
-    const CommonRows = () => (
-      <>
-        <div className="flex"><span className="w-32">Nama</span><span>:</span><input name="nama" value={formData.nama} onChange={handleInput} className={inputStyle} /></div>
-        <div className="flex"><span className="w-32">NIK</span><span>:</span><input name="nik" value={formData.nik} onChange={handleInput} className={inputStyle} /></div>
-        <div className="flex"><span className="w-32">Tempat/Tgl Lahir</span><span>:</span><input name="ttl" value={formData.ttl} onChange={handleInput} className={inputStyle} /></div>
-        <div className="flex"><span className="w-32">Alamat</span><span>:</span><input name="alamat" value={formData.alamat} onChange={handleInput} className={inputStyle} /></div>
-      </>
-    );
-
-    switch (selectedType) {
-      case 'domisili': 
-        return <SuratWrapper judul="Surat Keterangan Domisili"><CommonRows /><div className="flex pt-4"><span>Adalah benar warga kami yang berdomisili di alamat tersebut.</span></div></SuratWrapper>;
-      case 'sktm': 
-        return <SuratWrapper judul="Surat Keterangan Tidak Mampu"><CommonRows /><div className="flex mt-4"><span>Keperluan:</span><input name="keperluan" value={formData.keperluan} onChange={handleInput} className={inputStyle} /></div></SuratWrapper>;
-      case 'kelahiran':
-        return <SuratWrapper judul="Surat Keterangan Kelahiran"><CommonRows /><div className="flex mt-4"><span>Telah Lahir Anak Ke:</span><input name="ket" value={formData.ket} onChange={handleInput} className={inputStyle} /></div></SuratWrapper>;
-      case 'kematian':
-        return <SuratWrapper judul="Surat Keterangan Kematian"><CommonRows /><div className="flex mt-4"><span>Tgl Kematian:</span><input name="ket" value={formData.ket} onChange={handleInput} className={inputStyle} /></div></SuratWrapper>;
-      case 'sku':
-        return <SuratWrapper judul="Surat Keterangan Usaha"><CommonRows /><div className="flex mt-4"><span>Memiliki Usaha:</span><input name="ket" value={formData.ket} onChange={handleInput} className={inputStyle} /></div></SuratWrapper>;
-      case 'skck':
-        return <SuratWrapper judul="Pengantar SKCK"><CommonRows /><div className="flex mt-4"><span>Untuk Keperluan:</span><input name="keperluan" value={formData.keperluan} onChange={handleInput} className={inputStyle} /></div></SuratWrapper>;
-      // Tambahkan case lainnya di sini dengan pola yang sama
-      default:
-        return <SuratWrapper judul="Surat Keterangan Umum"><CommonRows /></SuratWrapper>;
-    }
-  };
-
+export default function AdminTemplate() {
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col items-center pb-20">
-      {/* TOOLBAR ATAS (NAVY) */}
-      <div className="w-full bg-[#0f172a] p-4 mb-8 sticky top-0 z-40 flex justify-center gap-4 shadow-lg">
-        <select 
-          value={selectedType} 
-          onChange={(e) => setSelectedType(e.target.value)}
-          className="bg-slate-800 text-white text-xs font-bold uppercase px-4 py-2 rounded-lg outline-none border border-slate-700 cursor-pointer"
-        >
-          <option value="domisili">Domisili</option>
-          <option value="sktm">SKTM</option>
-          <option value="kelahiran">Kelahiran</option>
-          <option value="kematian">Kematian</option>
-          <option value="sku">SKU (Usaha)</option>
-          <option value="skck">SKCK</option>
-          <option value="nikah">Nikah (NA)</option>
-          <option value="izin-keramaian">Izin Keramaian</option>
-          <option value="ijazah">Ijazah (TMI)</option>
-        </select>
-        <button className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase px-6 py-2 rounded-lg transition-all shadow-md">
-          📥 Download PDF
-        </button>
+    <div className="p-10 bg-[#F8FAFC] min-h-screen">
+      <div className="mb-10 flex justify-between items-end">
+        <div>
+          <h2 className="text-[#1E3A8A] text-3xl font-black uppercase tracking-tighter text-left">Editor Template</h2>
+          <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-1 text-left">Pekon Kandang Besi</p>
+        </div>
+        <div className="flex gap-4">
+          <button className="bg-white border-2 border-slate-200 text-slate-600 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all hover:bg-slate-50">
+            <Printer size={16} /> Cetak Sample
+          </button>
+          <button className="bg-[#1E3A8A] text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-blue-200 transition-all hover:bg-blue-900">
+            <Save size={16} /> Simpan Template
+          </button>
+        </div>
       </div>
 
-      {/* RENDER KERTAS */}
-      <div className="scale-[0.9] origin-top md:scale-100">
-        {renderTemplate()}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Sisi Kiri: Kontrol */}
+        <div className="space-y-6 text-left">
+          <div className="bg-white p-8 rounded-[35px] border border-slate-100 shadow-sm">
+            <h3 className="text-[#1E3A8A] font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Info size={14} /> Pengaturan Font
+            </h3>
+            <p className="text-sm font-bold text-slate-500 mb-4">Font Aktif: <span className="text-[#1E3A8A]">Times New Roman (Serif)</span></p>
+           <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+  <p className="text-[10px] font-black text-[#1E3A8A] uppercase tracking-widest leading-relaxed">
+    Sistem otomatisasi dokumen ini telah dikonfigurasi sesuai standar tata naskah dinas Pemerintah Pekon Kandang Besi. 
+    Seluruh data pemohon akan diintegrasikan secara presisi ke dalam format surat yang tersedia.
+  </p>
+</div>
+          </div>
+        </div>
+
+        {/* Sisi Kanan: Preview Surat (Kertas A4 Style) */}
+        <div className="bg-white p-[2cm] rounded-sm border border-slate-300 shadow-2xl min-h-[29.7cm] w-full text-black mx-auto" 
+             style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+          
+          {/* KOP SURAT */}
+          <div className="text-center border-b-[3px] border-black pb-2 mb-8">
+            <h3 className="font-bold text-[16pt] uppercase leading-tight">Pemerintah Pekon Kandang Besi</h3>
+            <h3 className="font-bold text-[16pt] uppercase leading-tight">Kecamatan Kotaagung Barat</h3>
+            <h3 className="font-bold text-[16pt] uppercase leading-tight">Kabupaten Tanggamus</h3>
+            <p className="text-[10pt] italic mt-1">Alamat : Jl.Ir.H.Juanda KM 07 Pekon Kandang Besi Kec.Kotaagung Barat Kab.Tanggamus Kode Pos 35651</p>
+          </div>
+
+          {/* JUDUL SURAT */}
+          <div className="text-center mb-10">
+            <h4 className="font-bold text-[14pt] underline uppercase tracking-tight">Surat Keterangan Domisili</h4>
+            <p className="text-[12pt]">Nomor : 470 / 019 / 60.2005 / XII / 2025</p>
+          </div>
+
+          {/* ISI SURAT */}
+          <div className="text-[12pt] space-y-6 leading-relaxed text-justify">
+            <p>Yang bertanda tangan dibawah ini Kepala Pekon Kandang Besi Kec. Kotaagung Barat Kab. Tanggamus, dengan ini menerangkan bahwa :</p>
+            
+            <div className="pl-12 space-y-2">
+              <table className="w-full">
+                <tbody>
+                  <tr><td className="w-40">Nama</td><td className="w-4">:</td><td className="font-bold uppercase">Rusdi</td></tr>
+                  <tr><td>Tempat, Tgl Lahir</td><td>:</td><td>Sanggi, 06-05-1978</td></tr>
+                  <tr><td>No. NIK</td><td>:</td><td>1806251010820003</td></tr>
+                  <tr><td>Jenis Kelamin</td><td>:</td><td>Laki-Laki</td></tr>
+                  <tr><td>Pekerjaan</td><td>:</td><td>Petani/Pekebun</td></tr>
+                  <tr><td>Agama</td><td>:</td><td>Islam</td></tr>
+                  <tr><td className="align-top">Alamat</td><td className="align-top">:</td><td>Pekon Kandang Besi Kecamatan Kotaagung Barat, Kabupaten Tanggamus.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p>
+              Adalah benar bertempat tinggal lebih dari 3 (tiga) tahun berturut-turut dan benar berdomisili di Pekon Kandang Besi Kecamatan Kotaagung Barat Kabupaten Tanggamus.
+            </p>
+            <p>
+              Demikian surat keterangan Domisili ini dibuat agar dapat digunakan sebagaimana mestinya.
+            </p>
+          </div>
+
+          {/* TANDA TANGAN */}
+          <div className="mt-16 ml-auto w-[7cm] text-center">
+            <p className="text-[12pt]">Kandang Besi, 30 Desember 2025</p>
+            <p className="text-[12pt] font-bold mb-24">Kepala Pekon Kandang Besi</p>
+            <p className="font-bold text-[12pt] underline uppercase">Mukhtar</p>
+          </div>
+
+        </div>
       </div>
     </div>
   );
-};
-
-export default AdminTemplate;
-
-// Tambahkan fungsi ini di dalam komponen Form/AdminTemplate
-const validateForm = () => {
-  if (formData.nik.length !== 16 || isNaN(formData.nik)) {
-    alert("NIK harus berjumlah 16 digit angka!");
-    return false;
-  }
-  return true;
-};
-
-// Gunakan di handleSubmit (Baris 287)
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return; // Hentikan proses jika NIK salah
-
-  const dataKeAdmin = { ...formData, status: "Menunggu Verifikasi" };
-  // ... rest of fetch code
-};
+}
