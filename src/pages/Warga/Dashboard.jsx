@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import HeroImage from "../assets/Surat.jpeg"; 
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import HeroImage from "../../assets/Surat.jpeg"; 
 
 export default function Dashboard() {
   const navigate = useNavigate();

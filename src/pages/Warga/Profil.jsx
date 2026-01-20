@@ -1,15 +1,15 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar"; // Di sini pakai ../ karena masuk folder pages
+import Navbar from "../../components/Navbar"; // Di sini pakai ../ karena masuk folder pages
 
 export default function Profil() {
   const navigate = useNavigate();
 
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
-    nama: "Siti Nurhaliza",
+    nama: "Budi Santoso ",
     nik: "3201234567890123",
     pekerjaan: "Wiraswasta",
-    email: "siti.nurhaliza@email.com",
+    email: "budi.santoso@email.com",
     telp: "0812-3456-7890",
     alamat: "Jl. Melati No. 12, RT 03/RW 07, Desa Sukamaju",
     tglLahir: "15 Januari 1990"

@@ -37,10 +37,6 @@ export default function Navbar() {
           Layanan
         </NavLink>
 
-        <NavLink to="/berita" className={({ isActive }) => (isActive ? activeStyle : idleStyle)}>
-          Berita
-        </NavLink>
-
         {/* Tombol Profil/Login */}
         {isLoggedIn ? (
           <div className="relative ml-4">

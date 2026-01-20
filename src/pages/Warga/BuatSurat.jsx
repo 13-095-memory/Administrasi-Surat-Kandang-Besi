@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 export default function BuatSurat() {
   const navigate = useNavigate();
@@ -11,33 +11,64 @@ export default function BuatSurat() {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn !== "true") {
-      navigate("/login"); 
+      navigate("/login");
     }
   }, [navigate]);
 
   // 2. DATA MEKANISME
   const mekanisme = [
-    { id: 1, judul: "Cari Surat", desc: "Temukan surat melalui kolom pencarian.", svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>) },
-    { id: 2, judul: "Isi Data", desc: "Lengkapi data diri pada formulir online.", svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>) },
-    { id: 3, judul: "Verifikasi", desc: "Tunggu validasi data oleh petugas desa.", svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04z" /></svg>) },
-    { id: 4, judul: "Selesai", desc: "Surat dapat diambil di Kantor Desa.", svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>) },
+    { 
+      id: 1, 
+      judul: "Cari Surat", 
+      desc: "Temukan surat melalui kolom pencarian.", 
+      svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>) 
+    },
+    { 
+      id: 2, 
+      judul: "Isi Data", 
+      desc: "Lengkapi data diri pada formulir online.", 
+      svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>) 
+    },
+    { 
+      id: 3, 
+      judul: "Verifikasi", 
+      desc: "Tunggu validasi data oleh petugas desa.", 
+      svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04z" /></svg>) 
+    },
+    { 
+      id: 4, 
+      judul: "Selesai", 
+      desc: "Surat dapat diambil di Kantor Desa.", 
+      svg: (<svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>) 
+    },
   ];
 
-  // 3. DATA DAFTAR SURAT
+  // 3. DATA DAFTAR SURAT (DENGAN SLUG)
+  // Slug ini harus sama dengan case di FormulirSurat.jsx
   const daftarSurat = [
-    { id: 1, nama: "Surat Pengantar KTP", deskripsi: "Untuk pembuatan atau perpanjangan KTP" },
-    { id: 2, nama: "Surat Keterangan Domisili", deskripsi: "Keterangan tempat tinggal penduduk di desa" },
-    { id: 3, nama: "Surat Keterangan Domisili Perusahaan", deskripsi: "Keterangan domisili untuk badan usaha" },
-    { id: 4, nama: "Surat Keterangan Tidak Mampu (SKTM)", deskripsi: "Untuk syarat bantuan pemerintah atau beasiswa" },
-    { id: 5, nama: "Surat Keterangan Usaha (SKU)", deskripsi: "Syarat pengajuan modal atau izin usaha" },
-    { id: 6, nama: "Surat Pengantar Nikah (NA)", deskripsi: "Persyaratan administrasi ke KUA" },
-    { id: 7, nama: "Surat Keterangan Kelahiran", deskripsi: "Dasar pengurusan akta kelahiran" },
-    { id: 8, nama: "Surat Keterangan Kematian", deskripsi: "Bukti administratif pelaporan kematian" },
+    { id: 1, slug: "imunisasi-catin", nama: "Surat Pengantar Imunasi Catin", deskripsi: "Surat pengantar untuk keperluan administrasi umum" },
+    { id: 2, slug: "domisili", nama: "Surat Keterangan Domisili", deskripsi: "Keterangan tempat tinggal penduduk di desa" },
+    { id: 3, slug: "kehilangan", nama: "Surat Keterangan Kehilangan", deskripsi: "Surat keterangan untuk dokumen yang hilang" },
+    { id: 4, slug: "sktm", nama: "Surat Keterangan Tidak Mampu (SKTM)", deskripsi: "Untuk syarat bantuan pemerintah atau beasiswa" },
+    { id: 5, slug: "sku", nama: "Surat Keterangan Usaha (SKU)", deskripsi: "Syarat pengajuan modal atau izin usaha" },
+    { id: 6, slug: "nikah", nama: "Surat Pengantar Nikah (NA)", deskripsi: "Persyaratan administrasi ke KUA" },
+    { id: 7, slug: "kelahiran", nama: "Surat Keterangan Kelahiran", deskripsi: "Dasar pengurusan akta kelahiran" },
+    { id: 8, slug: "kematian", nama: "Surat Keterangan Kematian", deskripsi: "Bukti administratif pelaporan kematian" },
+    { id: 9, slug: "izin-keramaian", nama: "Surat Izin Keramaian", deskripsi: "Untuk mengadakan acara atau kegiatan" },
+    { id: 10, slug: "skck", nama: "Surat Keterangan Catatan Kepolisian (SKCK)", deskripsi: "Untuk melamar pekerjaan atau keperluan hukum" },
+    { id: 11, slug: "ijazah", nama: "Surat Keterangan Tidak Memiliki Ijazah", deskripsi: "Untuk keperluan pekerjaan"},
+    { id: 12, slug: "belum-pernah-menikah", nama: "Surat Keterangan Belum Pernah Menikah", deskripsi: "Untuk keperluan pekerjaan"}
   ];
 
   const filteredSurat = daftarSurat.filter((item) =>
     item.nama.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // 4. HANDLER NAVIGASI DINAMIS
+  const handlePilihSurat = (slug) => {
+    // Navigasi ke route formulir-surat sambil membawa data state 'jenis'
+    navigate("/formulir-surat", { state: { jenis: slug } });
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-[#334155]">
@@ -83,8 +114,7 @@ export default function BuatSurat() {
                 filteredSurat.map((surat) => (
                   <button
                     key={surat.id}
-                    /* UPDATE: Tambahkan fungsi navigasi ke halaman formulir */
-                    onClick={() => navigate("/formulir-surat")} 
+                    onClick={() => handlePilihSurat(surat.slug)} 
                     className="w-full bg-[#1E3A8A] hover:bg-[#162447] p-4 rounded-xl flex items-center justify-between text-white transition-all group active:scale-[0.99] shadow-md border-b-2 border-black/20"
                   >
                     <div className="flex items-center gap-4 text-left">
