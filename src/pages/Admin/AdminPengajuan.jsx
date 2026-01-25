@@ -1,97 +1,210 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Check, X, Clock, Search } from "lucide-react";
+import { X, CheckCircle, XCircle, Download, FileText, Image as ImageIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminPengajuan() {
   const [pengajuan, setPengajuan] = useState([]);
+  const [detailTerpilih, setDetailTerpilih] = useState(null);
+  const navigate = useNavigate();
 
-  // 1. Ambil data dari database
-  const fetchPengajuan = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/pengajuan");
-      setPengajuan(res.data);
-    } catch (err) {
-      console.error("Gagal mengambil data");
-    }
+  const fetchData = () => {
+    axios.get("http://localhost:5000/api/pengajuan")
+      .then(res => setPengajuan(res.data))
+      .catch(err => console.error("Gagal ambil data"));
   };
 
   useEffect(() => {
-    fetchPengajuan();
+    fetchData();
   }, []);
 
-  // 2. Fungsi Update Status (Ini yang bikin berubah di Warga)
-  const updateStatus = async (id, statusBaru) => {
-    try {
-      await axios.put(`http://localhost:5000/api/pengajuan/${id}`, { status: statusBaru });
-      alert(`Status berhasil diubah menjadi ${statusBaru}`);
-      fetchPengajuan(); // Refresh data setelah update
-    } catch (err) {
-      alert("Gagal memperbarui status");
-    }
+  const handleProsesSurat = (item) => {
+    const dataForm = JSON.parse(item.data_form || '{}');
+    navigate("/admin/template", { 
+      state: { 
+        id_pengajuan: item.id,
+        jenis_surat: item.jenis_surat,
+        warga: {
+          nama: item.nama_warga,
+          nik: item.nik_pengaju,
+          alamat: dataForm.alamat || "",
+          pekerjaan: dataForm.pekerjaan || "",
+          agama: dataForm.agama || "",
+          ttl: dataForm.tempat_tgl_lahir || ""
+        }
+      } 
+    });
+  };
+
+  const updateStatus = (id, statusBaru) => {
+    axios.put(`http://localhost:5000/api/pengajuan/${id}`, { status: statusBaru })
+      .then(() => {
+        fetchData();
+        setDetailTerpilih(null);
+      })
+      .catch(err => alert("Gagal update status"));
   };
 
   return (
-    <div className="p-8 bg-slate-50 min-h-screen">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-slate-800">DATA PENGAJUAN SURAT</h1>
-          <p className="text-slate-500 text-sm font-medium">Kelola permohonan surat warga Pekon Kandang Besi</p>
-        </div>
+    <div className="p-10 font-sans text-left bg-slate-50 min-h-screen">
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Data Pengajuan Surat</h1>
+        <p className="text-slate-400 text-sm font-medium">Panel Verifikasi Dokumen Pekon Kandang Besi</p>
       </div>
-
-      <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      
+      <div className="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+        <table className="w-full text-left">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-100">
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Warga / NIK</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Jenis Surat</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Saat Ini</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Aksi Cepat</th>
+            <tr className="bg-slate-50/50 text-[11px] font-black uppercase tracking-widest text-slate-400">
+              <th className="p-8">Warga / NIK</th>
+              <th>Jenis Surat</th>
+              <th>Status</th>
+              <th className="text-center">Tindakan</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {pengajuan.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="p-6">
-                  <p className="font-bold text-slate-800 uppercase text-sm">{item.nama_warga}</p>
-                  <p className="text-xs text-slate-400 font-medium">{item.nik_pengaju}</p>
+              <tr key={item.id} className="hover:bg-slate-50/50 transition-all group">
+                <td className="p-8">
+                  <div className="font-bold text-slate-700">{item.nama_warga}</div>
+                  <div className="text-[10px] text-slate-400 font-black tracking-wider">{item.nik_pengaju}</div>
                 </td>
-                <td className="p-6">
-                  <span className="px-3 py-1 bg-blue-50 text-[#1E3A8A] rounded-lg text-[10px] font-bold uppercase">
+                <td>
+                  <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">
                     {item.jenis_surat}
                   </span>
                 </td>
-                <td className="p-6">
-                  <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${
-                    item.status === 'Selesai' ? 'bg-emerald-100 text-emerald-600' : 
-                    item.status === 'Ditolak' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
+                <td>
+                  <div className={`inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase border ${
+                    item.status === 'Selesai' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                    item.status === 'Ditolak' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-amber-50 text-amber-600 border-amber-100'
                   }`}>
-                    {item.status}
-                  </span>
-                </td>
-                <td className="p-6">
-                  <div className="flex justify-center gap-2">
-                    <button 
-                      onClick={() => updateStatus(item.id, "Selesai")}
-                      className="p-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-md shadow-emerald-100"
-                      title="Setujui & Selesai"
-                    >
-                      <Check size={18} />
-                    </button>
-                    <button 
-                      onClick={() => updateStatus(item.id, "Ditolak")}
-                      className="p-2 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-all shadow-md shadow-rose-100"
-                      title="Tolak Pengajuan"
-                    >
-                      <X size={18} />
-                    </button>
+                    {item.status || "Menunggu"}
                   </div>
+                </td>
+                <td className="p-8 text-center">
+                  <button onClick={() => setDetailTerpilih(item)} className="text-[10px] font-black uppercase tracking-widest text-[#1E3A8A] underline underline-offset-8 hover:text-blue-700 transition-colors">
+                    Buka Detail
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {detailTerpilih && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-6xl rounded-[48px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* MODAL HEADER */}
+            <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-white">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Detail Permohonan</h2>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">ID: #{detailTerpilih.id.toString().padStart(4, '0')}</p>
+              </div>
+              <button onClick={() => setDetailTerpilih(null)} className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-all">
+                <X size={24} />
+              </button>
+            </div>
+            
+            {/* MODAL BODY */}
+            <div className="p-8 overflow-y-auto bg-slate-50/30 flex-grow">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* KOLOM KIRI: DATA FORMULIR */}
+                <div className="space-y-6">
+                  <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                      <FileText className="text-blue-600" size={20} />
+                      <h3 className="font-black text-xs uppercase tracking-widest text-slate-800">Biodata Pengaju</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-5">
+                      {(() => {
+                        const data = JSON.parse(detailTerpilih.data_form || '{}');
+                        return [
+                          { label: "Nama Lengkap", value: data.nama },
+                          { label: "NIK", value: data.nik },
+                          { label: "Tempat, Tanggal Lahir", value: data.tempat_tgl_lahir },
+                          { label: "Pekerjaan", value: data.pekerjaan },
+                          { label: "Agama", value: data.agama },
+                          { label: "Jenis Kelamin", value: data.jenis_kelamin },
+                          { label: "Status Kawin", value: data.status_perkawinan },
+                          { label: "Alamat Lengkap", value: data.alamat },
+                        ].map((info, i) => (
+                          <div key={i} className="flex flex-col border-b border-slate-50 pb-2 last:border-0">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{info.label}</span>
+                            <span className="text-sm font-bold text-slate-700">{info.value || "-"}</span>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                </div>
+
+                {/* KOLOM KANAN: LAMPIRAN KTP */}
+                <div className="space-y-6">
+                  <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-4">
+                      <div className="flex items-center gap-3">
+                        <ImageIcon className="text-blue-600" size={20} />
+                        <h3 className="font-black text-xs uppercase tracking-widest text-slate-800">Lampiran KTP</h3>
+                      </div>
+                      
+                      {/* Tombol Download Real */}
+                      {JSON.parse(detailTerpilih.data_form).berkas?.ktp && (
+                        <a 
+                          href={`http://localhost:5000/uploads/${JSON.parse(detailTerpilih.data_form).berkas.ktp}`}
+                          download
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-2 bg-[#1E3A8A] text-white px-4 py-2 rounded-xl text-[10px] font-black hover:bg-blue-800 transition-all shadow-md shadow-blue-100"
+                        >
+                          <Download size={14} /> UNDUH KTP
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="flex-grow bg-slate-50 rounded-[24px] border-2 border-dashed border-slate-200 overflow-hidden relative group min-h-[300px] flex items-center justify-center">
+                      {JSON.parse(detailTerpilih.data_form).berkas?.ktp ? (
+                        <img 
+                          src={`http://localhost:5000/uploads/${JSON.parse(detailTerpilih.data_form).berkas.ktp}`}
+                          alt="Lampiran KTP"
+                          className="max-w-full max-h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="text-center">
+                          <ImageIcon size={48} className="mx-auto text-slate-200 mb-2" />
+                          <p className="text-slate-400 text-[10px] font-black uppercase">Berkas tidak tersedia</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* MODAL FOOTER */}
+            <div className="p-8 border-t border-slate-50 flex gap-4 bg-white">
+              <button 
+                onClick={() => handleProsesSurat(detailTerpilih)} 
+                className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white py-5 rounded-[24px] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-lg shadow-emerald-100 transition-all active:scale-95"
+              >
+                <CheckCircle size={18} /> Proses & Isi Template
+              </button>
+              
+              <button 
+                onClick={() => updateStatus(detailTerpilih.id, 'Ditolak')} 
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-5 rounded-[24px] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-lg shadow-rose-100 transition-all active:scale-95"
+              >
+                <XCircle size={18} /> Tolak Pengajuan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

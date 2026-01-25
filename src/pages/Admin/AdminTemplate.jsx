@@ -1,168 +1,163 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Download, ArrowLeft } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft, Loader2, Send } from "lucide-react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import axios from "axios";
 
 export default function AdminTemplate() {
   const location = useLocation();
-  const dataWarga = location.state?.warga || {};
+  const navigate = useNavigate();
+  const suratRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
+  const { id_pengajuan, warga, jenis_surat } = location.state || {};
 
   const [formData, setFormData] = useState({
-    nomorSurat: "470 / ___ / 60.2005 / ___ / 2026",
-    nama: dataWarga.nama || "",
-    nik: dataWarga.nik || "",
-    ttl: dataWarga.ttl || "Kandang Besi, __-__-____",
-    kelamin: dataWarga.kelamin || "Laki-Laki",
-    pekerjaan: dataWarga.pekerjaan || "Petani/Pekebun",
-    agama: "Islam",
-    alamat: dataWarga.alamat || "Pekon Kandang Besi Kec. Kotaagung Barat",
-    tglSurat: "13 Januari 2026",
-    jenisSurat: "domisili", 
-    isiTambahan: "JUAL BELI HASIL BUMI",
-    penandatangan: "MUKHTAR" 
+    nomorSurat: jenis_surat === "SKU" ? "470 / ___ / 60.2005 / I / 2026" : "470 / ___ / 60.2005 / XII / 2025",
+    nama: warga?.nama || "",
+    nik: warga?.nik || "",
+    ttl: warga?.ttl || "",
+    pekerjaan: warga?.pekerjaan || "",
+    alamat: warga?.alamat || "",
+    agama: warga?.agama || "",
+    jenisKelamin: warga?.jenisKelamin || "Laki-Laki",
+    statusKawin: "Kawin",
+    // Field baru agar bisa diedit manual sesuai kebutuhan 
+    lamaDomisili: "3 ( tiga )", 
+    namaUsaha: "JUAL BELI HASIL BUMI", 
+    tahunUsaha: "2021",
+    tglSurat: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    penandatangan: "MUKHTAR",
+    jabatan: "Kepala Pekon Kandang Besi"
   });
 
-  const handleDownloadPDF = () => {
-    const originalTitle = document.title;
-    document.title = `Surat_${formData.jenisSurat}_${formData.nama}`;
-    window.print();
-    document.title = originalTitle;
+  const handleFinalisasiSurat = async () => {
+    setLoading(true);
+    try {
+      await axios.put(`http://localhost:5000/api/pengajuan/finalkan/${id_pengajuan}`, {
+        status: "Selesai",
+        data_final: JSON.stringify(formData)
+      });
+
+      const element = suratRef.current;
+      const canvas = await html2canvas(element, { scale: 3 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
+      pdf.save(`Surat_${jenis_surat}_${formData.nama}.pdf`);
+
+      alert("Surat Berhasil Diarsip dan Dikirim!");
+      navigate("/admin/pengajuan");
+    } catch (error) {
+      alert("Gagal memproses surat.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden font-sans print:bg-white">
-      
-      {/* KIRI: PANEL INPUT */}
-      <div className="w-1/3 bg-white border-r border-slate-200 overflow-y-auto p-8 shadow-xl z-10 print:hidden">
-        <div className="flex items-center gap-4 mb-8 text-left">
-          <button className="p-2 hover:bg-slate-100 rounded-full transition-all text-[#1E3A8A]">
-            <ArrowLeft size={20} />
-          </button>
-          <h2 className="text-[#1E3A8A] font-black uppercase text-sm tracking-widest text-left">Input Data Surat</h2>
-        </div>
-
-        <div className="space-y-5 text-left">
-          {/* Pilih Template */}
+    <div className="flex h-screen bg-slate-100 font-sans">
+      {/* PANEL EDITOR (KIRI) */}
+      <div className="w-1/3 bg-white p-8 overflow-y-auto shadow-xl text-left">
+        <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-2 font-bold text-[#1E3A8A]">
+          <ArrowLeft size={18}/> KEMBALI
+        </button>
+        <h2 className="font-black uppercase text-xs mb-8 tracking-[0.2em] text-slate-400">Pengaturan Isi Surat</h2>
+        
+        <div className="space-y-5">
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Pilih Template</label>
-            <select 
-              value={formData.jenisSurat}
-              onChange={(e) => setFormData({...formData, jenisSurat: e.target.value})}
-              className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs font-bold outline-none"
-            >
-              <option value="domisili">Surat Keterangan Domisili</option>
-              <option value="sku">Surat Keterangan Usaha (SKU)</option>
-            </select>
+            <label className="text-[10px] font-black uppercase text-slate-400">Nomor Surat Resmi</label>
+            <input type="text" value={formData.nomorSurat} onChange={(e) => setFormData({...formData, nomorSurat: e.target.value})} className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 font-bold" />
           </div>
-
-          <hr className="border-slate-100" />
-
-          {/* Input Manual (Agama dihapus dari daftar ini agar tidak double) */}
-          {[
-            { label: "Nomor Surat", key: "nomorSurat" },
-            { label: "Tanggal Surat (Manual)", key: "tglSurat" },
-            { label: "Nama Lengkap", key: "nama" },
-            { label: "NIK", key: "nik" },
-            { label: "Tempat, Tanggal Lahir", key: "ttl" },
-            { label: "Pekerjaan", key: "pekerjaan" },
-          ].map((item) => (
-            <div key={item.key}>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{item.label}</label>
-              <input 
-                type="text" 
-                value={formData[item.key]}
-                onChange={(e) => setFormData({...formData, [item.key]: e.target.value})}
-                className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs font-bold outline-none focus:border-blue-500"
-              />
-            </div>
-          ))}
-
-          {/* DROPDOWN AGAMA (Ditaruh di sini secara manual) */}
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Agama</label>
-            <select 
-              value={formData.agama}
-              onChange={(e) => setFormData({...formData, agama: e.target.value})}
-              className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs font-bold outline-none focus:border-blue-500"
-            >
-              <option value="Islam">Islam</option>
-              <option value="Kristen">Kristen</option>
-              <option value="Katolik">Katolik</option>
-              <option value="Hindu">Hindu</option>
-              <option value="Budha">Budha</option>
-              <option value="Konghucu">Konghucu</option>
-            </select>
-          </div>
-
-          {formData.jenisSurat === "sku" && (
+          
+          {/* Input dinamis untuk lama domisili  */}
+          {jenis_surat !== "SKU" && (
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Nama/Jenis Usaha (Untuk SKU)</label>
-              <input 
-                type="text" 
-                value={formData.isiTambahan}
-                onChange={(e) => setFormData({...formData, isiTambahan: e.target.value})}
-                className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs font-bold outline-none"
-              />
+              <label className="text-[10px] font-black uppercase text-slate-400">Lama Tinggal (Tahun)</label>
+              <input type="text" value={formData.lamaDomisili} onChange={(e) => setFormData({...formData, lamaDomisili: e.target.value})} placeholder="Contoh: 5 ( lima )" className="w-full p-3 bg-blue-50 rounded-xl border border-blue-200 font-bold text-blue-700" />
             </div>
           )}
+
+          {jenis_surat === "SKU" && (
+            <>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-400">Nama Usaha</label>
+                <input type="text" value={formData.namaUsaha} onChange={(e) => setFormData({...formData, namaUsaha: e.target.value})} className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 font-bold" />
+              </div>
+            </>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-black uppercase text-slate-400">Penandatangan</label>
+              <input type="text" value={formData.penandatangan} onChange={(e) => setFormData({...formData, penandatangan: e.target.value})} className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 font-bold" />
+            </div>
+          </div>
         </div>
 
-        <button 
-          onClick={handleDownloadPDF}
-          className="w-full mt-10 bg-emerald-600 text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all"
-        >
-          <Download size={16} /> Simpan Sebagai PDF
+        <button onClick={handleFinalisasiSurat} disabled={loading} className="w-full mt-10 bg-[#1E3A8A] text-white py-5 rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3">
+          {loading ? <Loader2 className="animate-spin"/> : <Send size={18}/>}
+          {loading ? "MENYIMPAN..." : "FINALKAN & KIRIM"}
         </button>
       </div>
 
-      {/* KANAN: PREVIEW SURAT */}
-      <div className="flex-1 overflow-y-auto p-12 flex justify-center bg-slate-100 print:p-0 print:bg-white">
-        <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl p-[20mm] text-black relative print:shadow-none text-left" style={{ fontFamily: 'Times New Roman' }}>
+      {/* PREVIEW SURAT (KANAN) */}
+      <div className="flex-1 overflow-y-auto p-12 bg-slate-200 flex justify-center">
+        <div ref={suratRef} className="w-[210mm] min-h-[297mm] bg-white p-[20mm] shadow-2xl text-left text-black" style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: "1.5" }}>
           
-          {/* Header & Isi Surat Tetap Sama (Preview Otomatis Update dari State) */}
-          <div className="text-center border-b-4 border-black pb-2 mb-8">
-            <h1 className="text-xl font-bold leading-tight uppercase">Pemerintah Kabupaten Tanggamus</h1>
-            <h1 className="text-xl font-bold leading-tight uppercase">Kecamatan Kotaagung Barat</h1>
-            <h1 className="text-2xl font-bold leading-tight uppercase">Pekon Kandang Besi</h1>
-            <p className="text-[11px] italic">Alamat : Jl. Ir. H. Juanda Km 07 Pekon Kandang Besi Kode Pos 35651</p>
+          {/* KOP SURAT [cite: 1, 2, 3, 4] */}
+          <div className="text-center border-b-[3px] border-black pb-1 mb-1">
+             <h2 className="text-[16pt] font-bold uppercase leading-tight">Pemerintah Kabupaten Tanggamus [cite: 3]</h2>
+             <h2 className="text-[16pt] font-bold uppercase leading-tight">Kecamatan Kotaagung Barat [cite: 2]</h2>
+             <h1 className="text-[18pt] font-extrabold uppercase leading-tight">Pekon Kandang Besi [cite: 1]</h1>
+             <p className="text-[10pt] italic">Alamat : Jl. Ir. H. Juanda Km 07 Pekon Kandang Besi Kec. Kotaagung Barat Kab. Tanggamus Kode Pos : 35651 [cite: 4]</p>
+          </div>
+          <div className="border-b-[1px] border-black mb-6"></div>
+
+          <div className="text-center mb-8">
+             <h3 className="text-[14pt] font-bold underline uppercase underline-offset-4">
+               {jenis_surat === "SKU" ? "Surat Keterangan Usaha" : "Surat Keterangan Domisili"}
+             </h3>
+             <p className="text-[12pt]">Nomor : {formData.nomorSurat}</p>
           </div>
 
-          <div className="text-center mb-10">
-            <h2 className="text-base font-bold underline uppercase tracking-widest">
-              {formData.jenisSurat === "domisili" ? "Surat Keterangan Domisili" : "Surat Keterangan Usaha"}
-            </h2>
-            <p className="text-[12pt]">Nomor : {formData.nomorSurat}</p>
+          <div className="text-[12pt] space-y-4">
+             <p>Yang bertanda tangan di bawah ini Kepala Pekon Kandang Besi Kec. Kotaagung Barat Kab. Tanggamus menerangkan dengan sebenarnya bahwa: [cite: 7, 26]</p>
+             
+             <div className="ml-8 space-y-1">
+                <table className="w-full">
+                  <tbody>
+                    <tr><td className="w-44">Nama</td><td>: <b>{formData.nama}</b></td></tr>
+                    <tr><td>NIK</td><td>: {formData.nik}</td></tr>
+                    <tr><td>Tempat, Tgl Lahir</td><td>: {formData.ttl}</td></tr>
+                    <tr><td>Agama</td><td>: {formData.agama}</td></tr>
+                    <tr><td>Alamat</td><td>: {formData.alamat}</td></tr>
+                  </tbody>
+                </table>
+             </div>
+
+             {/* BAGIAN YANG SEKARANG DINAMIS [cite: 15, 36, 79] */}
+             {jenis_surat === "SKU" ? (
+               <div className="space-y-4">
+                 <p>Nama tersebut di atas adalah penduduk Pekon Kandang Besi yang bertempat tinggal di wilayah Kandang Besi. [cite: 78]</p>
+                 <p>Nama tersebut di atas membuka usaha <span className="font-bold">"{formData.namaUsaha}"</span> yang berlokasi di wilayah Pekon Kandang Besi sejak tahun {formData.tahunUsaha} sampai berjalan saat ini. [cite: 79]</p>
+               </div>
+             ) : (
+               <p>Adalah benar bertempat tinggal lebih dari <span className="font-bold underline">{formData.lamaDomisili}</span> tahun berturut-turut dan benar berdomisili di Pekon Kandang Besi Kecamatan Kotaagung Barat Kabupaten Tanggamus. </p>
+             )}
+
+             <p className="pt-4">Demikian surat keterangan ini dibuat dengan sebenar-benarnya untuk digunakan sebagaimana mestinya. [cite: 16, 37, 80]</p>
           </div>
 
-          <div className="text-[12pt] leading-relaxed text-justify space-y-6">
-            <p>Yang bertanda tangan dibawah ini Kepala Pekon Kandang Besi Kec. Kotaagung Barat Kab. Tanggamus, dengan ini menerangkan bahwa :</p>
-            
-            <div className="ml-10 space-y-1">
-              <div className="flex w-full"><span className="w-44 uppercase">Nama</span><span>: {formData.nama}</span></div>
-              <div className="flex w-full"><span className="w-44 uppercase">No NIK</span><span>: {formData.nik}</span></div>
-              <div className="flex w-full"><span className="w-44 uppercase">Tempat, Tgl Lahir</span><span>: {formData.ttl}</span></div>
-              <div className="flex w-full"><span className="w-44 uppercase">Jenis Kelamin</span><span>: {formData.kelamin}</span></div>
-              <div className="flex w-full"><span className="w-44 uppercase">Pekerjaan</span><span>: {formData.pekerjaan}</span></div>
-              <div className="flex w-full"><span className="w-44 uppercase">Agama</span><span>: {formData.agama}</span></div>
-              <div className="flex w-full items-start"><span className="w-44 uppercase">Alamat</span><span className="flex-1">: {formData.alamat}</span></div>
-            </div>
-
-            {formData.jenisSurat === "domisili" ? (
-              <p>Adalah benar bertempat tinggal lebih dari 3 (tiga) tahun berturut-turut dan benar berdomisili di Pekon Kandang Besi Kecamatan Kotaagung Barat Kabupaten Tanggamus.</p>
-            ) : (
-              <div className="space-y-4">
-                <p>Nama tersebut diatas adalah penduduk Pekon Kandang Besi yang bertempat tinggal di wilayah Kandang Besi.</p>
-                <p>Nama tersebut diatas membuka usaha “{formData.isiTambahan}” yang berlokasi di wilayah Pekon Kandang Besi sejak tahun 2021 sampai berjalan saat ini.</p>
-              </div>
-            )}
-
-            <p>Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.</p>
+          {/* TANDA TANGAN [cite: 17, 18, 19] */}
+          <div className="mt-12 ml-auto w-72 text-center">
+             <p>Kandang Besi, {formData.tglSurat}</p>
+             <p className="font-bold">{formData.jabatan}</p>
+             <div className="h-24"></div>
+             <p className="font-bold uppercase underline underline-offset-4">{formData.penandatangan} [cite: 19]</p>
           </div>
 
-          <div className="mt-16 ml-auto w-72 text-center">
-            <p>Kandang Besi, {formData.tglSurat}</p>
-            <p className="font-bold uppercase mb-24">Kepala Pekon Kandang Besi</p>
-            <p className="font-bold underline uppercase">{formData.penandatangan}</p>
-          </div>
         </div>
       </div>
     </div>

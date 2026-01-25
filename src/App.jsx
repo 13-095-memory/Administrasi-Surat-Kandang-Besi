@@ -12,8 +12,10 @@ import BuatSurat from "./pages/Warga/BuatSurat";
 import Profil from "./pages/Warga/Profil"; 
 import FormulirSurat from "./pages/Warga/FormulirSurat";
 import StatusSurat from "./pages/Warga/StatusSurat";
+import CetakSuratWarga from "./pages/Warga/CetakSuratWarga"; // <--- TAMBAHKAN INI
 
 // --- IMPORT HALAMAN ADMIN ---
+import LoginAdmin from "./pages/Admin/LoginAdmin"; 
 import AdminDashboard from "./pages/Admin/AdminDashboard"; 
 import AdminPengajuan from "./pages/Admin/AdminPengajuan";
 import AdminTemplate from "./pages/Admin/AdminTemplate";
@@ -33,8 +35,12 @@ function App() {
         <Route path="/status" element={<StatusSurat />} />
         <Route path="/formulir-surat" element={<FormulirSurat />} />
         <Route path="/profil" element={<Profil />} />
+        <Route path="/cetak-surat-warga" element={<CetakSuratWarga />} /> {/* <--- TAMBAHKAN INI */}
 
-        {/* 3. RUTE ADMIN */}
+        {/* 3. RUTE LOGIN ADMIN */}
+        <Route path="/admin/login" element={<LoginAdmin />} />
+
+        {/* 4. RUTE DASHBOARD ADMIN (Menggunakan Layout) */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
@@ -42,7 +48,7 @@ function App() {
           <Route path="template" element={<AdminTemplate />} />
         </Route>
 
-        {/* 4. FALLBACK */}
+        {/* 5. FALLBACK */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
@@ -50,4 +56,3 @@ function App() {
 }
 
 export default App;
-// --- JANGAN TULIS APAPUN DI BAWAH INI! ---
