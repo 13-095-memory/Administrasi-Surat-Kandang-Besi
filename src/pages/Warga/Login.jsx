@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from '../../../utils/api';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [nama, setNama] = useState("");
+  const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -12,12 +12,13 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { 
-        nama_lengkap: nama, 
+      const res = await api.post("/api/auth/login", { 
+        nik: nik, 
         password: password 
       });
       
-      localStorage.setItem("user_profile", JSON.stringify(res.data.profil));
+      localStorage.setItem("user_data", JSON.stringify(res.data.user)); 
+      localStorage.setItem("token", res.data.token);
       
       if (res.data.profil.role === "admin") {
         alert("Login Admin Berhasil!");
@@ -27,7 +28,7 @@ export default function Login() {
         navigate("/beranda");
       }
     } catch (err) {
-      alert(err.response?.data?.error || "Gagal masuk. Cek nama dan kata sandi.");
+      alert(err.response?.data?.error || "Gagal masuk. Cek NIK dan kata sandi.");
     } finally {
       setLoading(false);
     }

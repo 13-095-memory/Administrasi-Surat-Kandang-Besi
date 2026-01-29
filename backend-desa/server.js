@@ -2,12 +2,18 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
 const multer = require("multer");
+import authRoutes from './routes/auth/authRoutes.js';
+import adminRoutes from './routes/admin/adminRoutes.js';
+import suratRoutes from './routes/suratRoutes.js';
 
 const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/surat', suratRoutes);
 
 // Route untuk cek apakah backend jalan
 app.get("/", (req, res) => {

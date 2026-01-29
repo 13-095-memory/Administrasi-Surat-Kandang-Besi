@@ -27,7 +27,7 @@ export default function FormKematian() {
     });
 
     try {
-      await api.post('/surat', data);
+      await api.post('/api/surat', data);
       alert("✅ Permohonan Surat Kematian Berhasil Diajukan!");
       navigate('/beranda');
     } catch (error) {

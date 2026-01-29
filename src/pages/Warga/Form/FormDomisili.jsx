@@ -32,7 +32,7 @@ export default function FormDomisili() {
     });
 
     try {
-      await api.post('/surat-domisili', data);
+      await api.post('/api/surat', data);
       alert("✅ Permohonan Domisili Berhasil!");
       navigate('/beranda');
     } catch (error) {

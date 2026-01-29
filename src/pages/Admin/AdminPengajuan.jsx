@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../utils/api"
+import api from "../../utils/api";
 import { X, CheckCircle, XCircle, Download, FileText, Image as ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ export default function AdminPengajuan() {
   const navigate = useNavigate();
 
   const fetchData = () => {
-    api.get("/api/pengajuan")
+    api.get("/api/admin/surat")
       .then(res => setPengajuan(res.data))
       .catch(err => console.error("Gagal ambil data"));
   };

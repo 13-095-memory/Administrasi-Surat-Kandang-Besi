@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../utils/api"
+import api from "../../utils/api";
 import { ChevronDown, FileText, CheckCircle, Clock, AlertCircle } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -8,7 +8,7 @@ export default function AdminDashboard() {
 
   const fetchPengajuan = async () => {
     try {
-      const res = await api.get("/api/pengajuan");
+      const res = await api.get("/api/admin/surat");
       setPengajuan(res.data);
     } catch (err) { 
       console.error(err); 

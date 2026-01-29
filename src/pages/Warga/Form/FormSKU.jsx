@@ -36,7 +36,7 @@ export default function FormSKU() {
     });
 
     try {
-      await api.post('/surat', data);
+      await api.post('/api/surat', data);
       alert("✅ Permohonan SKU Berhasil Diajukan!");
       navigate('/beranda');
     } catch (error) {

@@ -17,7 +17,7 @@ export default function FormSKTM() {
     const data = new FormData();
     Object.keys(formData).forEach(key => data.append(key, formData[key]));
     try {
-      await api.post('/surat', data);
+      await api.post('/api/surat', data);
       alert("✅ Permohonan SKTM Berhasil!");
       navigate('/beranda');
     } catch (error) { alert("❌ Gagal mengajukan surat"); }

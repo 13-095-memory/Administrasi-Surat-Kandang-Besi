@@ -8,6 +8,8 @@ const router = express.Router();
 // ✅ Apply admin middleware to all routes
 router.use(adminMiddleware);
 
+router.put('/update-profil', adminSuratController.updateAdminProfil);
+
 // --------------------------------------------------
 // 📋 SURAT MANAGEMENT ROUTES
 // --------------------------------------------------
