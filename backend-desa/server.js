@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const prisma = require("./db");
+const path = require("path");
 
 const app = express();
 
