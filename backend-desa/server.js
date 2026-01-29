@@ -2,21 +2,14 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
 const multer = require("multer");
-const fs = require("fs");
 
 const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
 
-if (!fs.existsSync("./uploads")) { fs.mkdirSync("./uploads"); }
-
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => { cb(null, Date.now() + "-" + file.originalname); }
-});
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // --- API AUTHENTICATION ---
@@ -64,7 +57,7 @@ app.post("/api/pengajuan", upload.any(), async (req, res) => {
   const { userId, jenisSurat, noTiket, data_form } = req.body;
   try {
     let parsedData = JSON.parse(data_form);
-    await prisma.surat.create({ // Pakai model 'surat' sesuai gambar
+    await prisma.surat.create({ // Menggunakan model 'surat'
       data: {
         userId: parseInt(userId),
         jenisSurat: jenisSurat,
