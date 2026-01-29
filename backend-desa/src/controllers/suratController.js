@@ -1,4 +1,5 @@
-const prisma = require('../db');
+// src/controllers/suratController.js
+const prisma = require('../../db');
 
 // --------------------------------------------------
 // 🏢 FUNGSI UNTUK WARGA (PENGGUNA)

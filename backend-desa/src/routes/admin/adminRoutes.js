@@ -1,4 +1,5 @@
 const express = require('express');
+const prisma = require('../../../db');
 const suratController = require('../../controllers/suratController');
 const adminMiddleware = require('../../controllers/middleware/adminMiddleware');
 const authMiddleware = require('../../controllers/middleware/authMiddleware');

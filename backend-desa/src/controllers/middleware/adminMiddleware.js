@@ -1,4 +1,4 @@
-const prisma = require('../../db');
+const prisma = require('../../../db');
 
 const adminOnly = async (req, res, next) => {
   try {

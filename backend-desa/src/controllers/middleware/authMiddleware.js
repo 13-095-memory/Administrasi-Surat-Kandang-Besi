@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const prisma = require('../../db');
+const prisma = require('../../../db');
 
 exports.protect = async (req, res, next) => {
   let token;

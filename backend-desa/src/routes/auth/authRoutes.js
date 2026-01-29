@@ -1,6 +1,6 @@
 // backend-desa/src/routes/auth/authRoutes.js
 const express = require('express');
-const prisma = require('../db'); // Pastikan db.js ada di luar folder routes
+const prisma = require('../../../db');
 
 // Pastikan file-file controller di bawah ini juga pakai module.exports, 
 // kalau belum, mending buat route manual dulu di sini untuk tes.

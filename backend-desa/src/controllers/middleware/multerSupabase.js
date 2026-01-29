@@ -4,6 +4,7 @@
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
+const prisma = require('../../../db');
 
 // ✅ Configure Supabase with environment variables
 const supabaseUrl = process.env.SUPABASE_URL;

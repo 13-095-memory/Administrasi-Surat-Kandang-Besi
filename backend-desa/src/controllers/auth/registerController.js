@@ -1,8 +1,6 @@
 // src/controllers/auth/registerController.js
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../../../db');
 const bcrypt = require('bcryptjs');
-
-const prisma = new PrismaClient();
 
 exports.register = async (req, res) => {
   const { fullName, phoneNumber, nik, password } = req.body;
