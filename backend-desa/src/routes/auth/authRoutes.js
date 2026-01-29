@@ -23,4 +23,4 @@ router.get('/profile', authMiddleware.protect, profileController.getProfile);
 // Update user profile (protected)
 router.put('/profile', authMiddleware.protect, profileController.updateProfile);
 
-export default router;
+module.exports = router;

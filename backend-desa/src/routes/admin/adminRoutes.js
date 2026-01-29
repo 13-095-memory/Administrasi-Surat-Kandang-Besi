@@ -35,4 +35,4 @@ router.delete('/surat/:id', adminSuratController.deleteSurat);
 // Get statistics
 router.get('/statistics', adminSuratController.getStatistics);
 
-export default router;
+module.exports = router;

@@ -34,4 +34,4 @@ router.get('/:id', authMiddleware.protect, suratController.getSuratById);
 // Download surat selesai (protected)
 router.get('/:id/download', authMiddleware.protect, suratController.downloadSuratSelesai);
 
-export default router;
+module.exports = router;
