@@ -1,15 +1,15 @@
-// backend/src/routes/suratRoutes.js
 const express = require('express');
 const suratController = require('../controllers/suratController');
 const authMiddleware = require('../controllers/middleware/authMiddleware');
-const upload = require('../controllers/middleware/multerSupabase');
+// Perhatikan kurung kurawal { upload } di bawah ini:
+const { upload } = require('../controllers/middleware/multerSupabase');
 
 const router = express.Router();
 
-// Create surat baru (protected)
+// Route tanpa file
 router.post('/', authMiddleware.protect, suratController.createSurat);
 
-// Create surat baru with file uploads (protected)
+// Route dengan file (Sekarang upload.fields pasti JALAN)
 router.post('/upload-lengkap', 
   authMiddleware.protect, 
   upload.fields([
@@ -20,13 +20,6 @@ router.post('/upload-lengkap',
   suratController.createSurat
 );
 
-// Get surat milik user (protected)
 router.get('/', authMiddleware.protect, suratController.getMySurat);
-
-// Get detail surat by ID (protected)
-router.get('/:id', authMiddleware.protect, suratController.getSuratById);
-
-// Download surat selesai (protected)
-router.get('/:id/download', authMiddleware.protect, suratController.downloadSuratSelesai);
 
 module.exports = router;
