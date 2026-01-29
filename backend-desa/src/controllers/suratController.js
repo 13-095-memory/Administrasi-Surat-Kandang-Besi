@@ -66,9 +66,9 @@ exports.getAllSurat = async (req, res) => {
       include: {
         user: {
           select: {
-            fullName: true,
+            nama_lengkap: true,
             nik: true,
-            phoneNumber: true
+            no_telp: true
           }
         }
       },

@@ -3,7 +3,7 @@ const prisma = require('../../../db');
 const bcrypt = require('bcryptjs');
 
 exports.register = async (req, res) => {
-  const { fullName, phoneNumber, nik, password } = req.body;
+  const { nama_lengkap, no_telp, nik, password } = req.body;
 
   try {
     // Cek apakah NIK sudah ada
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
     }
 
     // Cek apakah nomor telepon sudah ada
-    const existingUserByPhone = await prisma.user.findUnique({ where: { phoneNumber } });
+    const existingUserByPhone = await prisma.user.findUnique({ where: { no_telp } });
     if (existingUserByPhone) {
       return res.status(400).json({ error: 'Nomor telepon sudah terdaftar.' });
     }
@@ -25,13 +25,13 @@ exports.register = async (req, res) => {
     // Buat user baru
     const newUser = await prisma.user.create({
       data: {
-        fullName,
-        phoneNumber,
+        nama_lengkap,
+        no_telp,
         nik,
         password: hashedPassword,
         role: 'WARGA'
       },
-      select: { id: true, fullName: true, phoneNumber: true, nik: true, role: true }
+      select: { id: true, nama_lengkap: true, no_telp: true, nik: true, role: true }
     });
 
     res.status(201).json({

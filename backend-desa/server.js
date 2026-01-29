@@ -44,9 +44,9 @@ app.post("/api/auth/register", async (req, res) => {
   try {
     await prisma.user.create({
       data: {
-        fullName: nama_lengkap, // Sesuai field 'fullName' di gambar
+        nama_lengkap: nama_lengkap, // Sesuai field 'nama_lengkap' di gambar
         nik: nik,
-        phoneNumber: no_telp, // Sesuai field 'phoneNumber' di gambar
+        no_telp: no_telp, // Sesuai field 'no_telp' di gambar
         password: password,
         role: "WARGA"
       }
@@ -60,7 +60,7 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     // Di schema baru, Admin dan Warga ada di satu tabel "User" dengan beda role
     const user = await prisma.user.findFirst({
-      where: { fullName: nama_lengkap, password: password }
+      where: { nama_lengkap: nama_lengkap, password: password }
     });
 
     if (user) return res.json({ profil: user });
