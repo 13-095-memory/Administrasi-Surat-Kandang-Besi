@@ -1,4 +1,4 @@
-// backend-desa/routes/authRoutes.js
+// backend-desa/src/routes/auth/authRoutes.js
 const express = require('express');
 const prisma = require('../db'); // Pastikan db.js ada di luar folder routes
 

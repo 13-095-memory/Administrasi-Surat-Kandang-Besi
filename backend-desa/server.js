@@ -1,20 +1,21 @@
 const express = require("express");
-const cors = require("cors");
-const multer = require("multer");
-const prisma = require("./db");
 const path = require("path");
+const cors = require("cors");
+const prisma = require("./db");
+const multer = require("multer");
 
 const app = express();
 
-const authRoutes = require(path.join(__dirname, "routes", "authRoutes"));
-const adminRoutes = require(path.join(__dirname, "routes", "adminRoutes"));
-const suratRoutes = require(path.join(__dirname, "routes", "suratRoutes"));
+app.use(cors());
+app.use(express.json());
+
+const authRoutes = require("./routes/authRoutes");
+const suratRoutes = require("./routes/suratRoutes");
+const adminRoutes = require("./routes/admin/adminRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/surat", suratRoutes);
-app.use(cors());
-app.use(express.json());
 
 // Route untuk cek apakah backend jalan
 app.get("/", (req, res) => {
