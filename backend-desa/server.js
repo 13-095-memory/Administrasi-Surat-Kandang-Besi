@@ -1,10 +1,17 @@
 const express = require("express");
-const prisma = require("./db");
 const cors = require("cors");
 const multer = require("multer");
+const prisma = require("./db");
 
 const app = express();
 
+const authRoutes = require(path.join(__dirname, "routes", "authRoutes"));
+const adminRoutes = require(path.join(__dirname, "routes", "adminRoutes"));
+const suratRoutes = require(path.join(__dirname, "routes", "suratRoutes"));
+
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/surat", suratRoutes);
 app.use(cors());
 app.use(express.json());
 
@@ -19,13 +26,6 @@ app.get("/", (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const authRoutes = require(path.join(__dirname, "routes", "authRoutes"));
-const adminRoutes = require(path.join(__dirname, "routes", "adminRoutes"));
-const suratRoutes = require(path.join(__dirname, "routes", "suratRoutes"));
-
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/surat", suratRoutes);
 
 // --- API AUTHENTICATION ---
 app.get("/api/auth/check-nik/:nik", async (req, res) => {
