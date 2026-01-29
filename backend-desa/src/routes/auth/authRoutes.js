@@ -1,5 +1,6 @@
 // backend/src/routes/auth/authRoutes.js
 import express from 'express';
+import prisma from '../../db.js';
 import * as loginController from '../../controllers/auth/loginController.js';
 import * as registerController from '../../controllers/auth/registerController.js';
 import * as profileController from '../../controllers/auth/profileController.js';

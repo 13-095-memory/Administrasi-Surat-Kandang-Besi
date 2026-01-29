@@ -1,5 +1,6 @@
 // backend/src/routes/admin/adminRoutes.js
 import express from 'express';
+import prisma from '../../db.js';
 import * as adminSuratController from '../../controllers/admin/adminSuratController.js';
 import adminMiddleware from '../../controllers/middleware/adminMiddleware.js';
 

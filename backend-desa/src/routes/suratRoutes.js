@@ -1,5 +1,6 @@
 // backend/src/routes/suratRoutes.js
 import express from 'express';
+import prisma from '../db.js';
 import * as suratController from '../controllers/suratController.js';
 import authMiddleware from '../controllers/middleware/authMiddleware.js';
 import upload from '../controllers/middleware/multerSupabase.js';
