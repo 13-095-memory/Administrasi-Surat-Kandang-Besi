@@ -44,9 +44,9 @@ export default function Login() {
       <div className="max-w-md w-full bg-white p-4">
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
-            <label className="text-xs font-bold text-[#1E3A8A] uppercase">Nama Lengkap / Username</label>
-            <input required type="text" placeholder="Masukkan nama" value={nama} 
-              onChange={(e) => setNama(e.target.value)}
+            <label className="text-xs font-bold text-[#1E3A8A] uppercase">NIK</label>
+            <input required type="text" placeholder="Masukkan NIK" value={nik} 
+              onChange={(e) => setNik(e.target.value)}
               className="w-full mt-2 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-[#1E3A8A]"/>
           </div>
 
