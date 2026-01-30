@@ -17,14 +17,13 @@ exports.createSurat = async (req, res) => {
     let parsedData = typeof data_form === 'string' ? JSON.parse(data_form) : data_form;
 
     // Menghandle upload file dari Supabase (jika ada)
-    if (req.files) {
+    if (req.files && req.files.length > 0) {
       const filePaths = {};
-      Object.keys(req.files).forEach(key => {
-        // req.files[key][0].path berisi URL publik Supabase dari middleware
-        filePaths[key] = req.files[key][0].path; 
+      req.files.forEach(file => {
+        // file.path berisi URL dari Supabase yang dibuat oleh middleware
+        filePaths[file.fieldname] = file.path; 
       });
-      // Simpan URL gambar ke dalam object berkas
-      parsedData.berkas = filePaths;
+      parsedData.berkas = filePaths; // Masukkan link foto ke dalam JSON data
     }
 
     const newSurat = await prisma.surat.create({
