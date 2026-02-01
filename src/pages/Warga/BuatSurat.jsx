@@ -8,11 +8,10 @@ export default function BuatSurat() {
 
   // Daftar Jenis Surat - ID harus sama dengan case di FormulirSurat.jsx
   const jenisSurat = [
-    { id: "domisili", nama: "Surat Keterangan Domisili", desc: "Keterangan tempat tinggal penduduk di desa" },
-    { id: "sktm", nama: "Surat Keterangan Tidak Mampu (SKTM)", desc: "Untuk syarat bantuan pemerintah atau beasiswa" },
-    { id: "sku", nama: "Surat Keterangan Usaha (SKU)", desc: "Syarat pengajuan modal atau izin usaha" },
-    { id: "kelahiran", nama: "Surat Keterangan Kelahiran", desc: "Dasar pengurusan akta kelahiran" },
-    { id: "kematian", nama: "Surat Keterangan Kematian", desc: "Bukti administratif pelaporan kematian" },
+    { id: "domisili", nama: "Surat Keterangan Domisili", desc: "Surat keterangan bahwa warga tinggal di wilayah desa" },
+    { id: "sktm", nama: "Surat Keterangan Tidak Mampu (SKTM)", desc: "Keterangan kondisi ekonomi warga untuk keperluan bantuan, beasiswa, atau layanan sosial" },
+    { id: "sku", nama: "Surat Keterangan Usaha (SKU)", desc: "Keterangan resmi bahwa warga memiliki dan menjalankan usaha tertentu di wilayah desa" },
+    { id: "keramaian", nama: "Surat Izin Keramaian", desc: "Izin penyelenggaraan kegiatan yang melibatkan keramaian di lingkungan desa" },
   ];
 
   // Mekanisme Pengajuan

@@ -18,29 +18,23 @@ export default function Profil() {
   }, []);
 
   const handleUpdate = async () => {
-    try {
-      // Kirim formData lengkap termasuk ID ke backend
-      const res = await axios.put("http://localhost:5000/api/auth/update-profil", {
-        ...formData,
-        id: userData.id 
-      });
+  try {
+    // Pastikan formData mengandung ID atau NIK sesuai query server.js kamu
+    const res = await axios.put("http://localhost:5000/api/auth/update-profil", formData);
 
-      // Update State dan LocalStorage dengan data terbaru dari server
-      const updatedUser = { ...userData, ...res.data.profil };
-      setUserData(updatedUser);
-      localStorage.setItem("profil", JSON.stringify(updatedUser));
-      
-      setIsEditing(false);
-      alert("Profil Berhasil Diperbarui!");
-      
-      // Trigger update navbar jika perlu
-      window.dispatchEvent(new Event("storage"));
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.error || "Gagal memperbarui profil");
-    }
-  };
-
+    // 1. Simpan ke localStorage dengan KEY YANG SAMA (user_profile)
+    localStorage.setItem("user_profile", JSON.stringify(formData));
+    
+    // 2. Beritahu Navbar untuk update nama
+    window.dispatchEvent(new Event("profileUpdate"));
+    
+    setIsEditing(false);
+    alert("Profil Berhasil Diperbarui!");
+  } catch (err) {
+    console.error("Error detail:", err.response?.data);
+    alert("Gagal update: " + (err.response?.data?.error || "Cek terminal server"));
+  }
+};
   if (!userData) return <div className="p-10 text-center font-black">Memuat Profil...</div>;
 
   return (

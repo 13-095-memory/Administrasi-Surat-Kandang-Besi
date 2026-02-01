@@ -17,7 +17,7 @@ export default function Login() {
         password: password 
       });
       
-      localStorage.setItem("user_profile", JSON.stringify(res.data.profil));
+      localStorage.setItem("profil", JSON.stringify(res.data.profil));
       
       if (res.data.profil.role === "admin") {
         alert("Login Admin Berhasil!");
